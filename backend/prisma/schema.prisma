@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+}
+
+enum SessionType {
+  PUBLIC
+  PRIVATE
+  FRIENDSONLY
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum GenderPref {
+  ALLGENDERS
+  MALEONLY
+  FEMALEONLY
+}
+
+model User {
+  user_id            String               @id @default(uuid())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  providerId         String               @unique
+  email              String               @unique
+  name               String
+  avatarUrl          String
+  location           String?
+  bio                String?
+  climbing_level     SkillLevel?
+  gender             String?
+  sessions_joined    Int?
+  Session            Session[]
+  SessionParticipant SessionParticipant[]
+  Friendship         Friendship[]
+}
+
+model Friendship {
+  friendship_id String           @id @default(uuid())
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  user_id       String
+  user          User             @relation(fields: [user_id], references: [user_id])
+  friend_id     String
+  status        FriendshipStatus @default(PENDING)
+}
+
+model Gym {
+  gym_id        String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  name          String
+  location      String
+  description   String
+  openingHours  String
+  contactNumber String
+  contactEmail  String
+  website       String
+  Session       Session[]
+}
+
+model Session {
+  session_id         String               @id @default(uuid())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  creator_id         String
+  creator            User                 @relation(fields: [creator_id], references: [user_id])
+  gym_id             String
+  gym                Gym                  @relation(fields: [gym_id], references: [gym_id])
+  type               SessionType
+  notes              String
+  date               DateTime
+  skill_level        SkillLevel
+  max_participants   Int
+  gender_pref        GenderPref
+  SessionParticipant SessionParticipant[]
+}
+
+model SessionParticipant {
+  participant_id String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user_id        String
+  user           User     @relation(fields: [user_id], references: [user_id])
+  session_id     String
+  session        Session  @relation(fields: [session_id], references: [session_id])
+  joinedAt       DateTime @default(now())
+  lobbyActive    Boolean  @default(true)
+}
