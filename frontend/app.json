@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "com.gripguild",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -14,13 +14,22 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.algren.gripguild",
+      "CFBundleURLTypes": [
+        {
+          "CFBundleURLSchemes": [
+            "com.googleusercontent.apps.1062870520492-ggg23b1kal30sm9pijftshe18qa8v54u"
+          ]
+        }
+      ]
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.algren.gripguild"
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +47,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "0098809f-8b9d-4c23-be46-9fcc222d0850"
+      }
     }
   }
 }

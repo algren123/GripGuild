@@ -43,8 +43,8 @@ model User {
   updatedAt          DateTime             @updatedAt
   providerId         String               @unique
   email              String               @unique
-  name               String
-  avatarUrl          String
+  name               String?
+  avatarUrl          String?
   location           String?
   bio                String?
   climbing_level     SkillLevel?

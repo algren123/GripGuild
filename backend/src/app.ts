@@ -1,12 +1,11 @@
 import express, { Request, Response, Express, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
+import prisma from './prismaInstance';
+import userRouter from './routes/userRoutes';
 
 const cors = require('cors');
 
 dotenv.config();
-
-const prisma = new PrismaClient();
 
 const app: Express = express();
 
@@ -17,6 +16,8 @@ app.use(cors());
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
+
+app.use('/api/users', userRouter);
 
 // Handle 404 Not Found
 app.use((req: Request, res: Response, next: NextFunction) => {
