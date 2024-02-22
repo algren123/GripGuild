@@ -27,8 +27,20 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>myapp</string>
+          <string>com.gripguild</string>
           <string>com.algren.gripguild</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.1062870520492-ggg23b1kal30sm9pijftshe18qa8v54u</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+gripguild</string>
         </array>
       </dict>
     </array>
