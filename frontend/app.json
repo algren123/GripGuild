@@ -16,6 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.algren.gripguild",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "CFBundleURLTypes": [
         {
           "CFBundleURLSchemes": [
@@ -29,7 +30,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.algren.gripguild"
+      "package": "com.algren.gripguild",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -41,7 +43,7 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
+          "iosUrlScheme": "com.googleusercontent.apps.1062870520492-ggg23b1kal30sm9pijftshe18qa8v54u"
         }
       ]
     ],

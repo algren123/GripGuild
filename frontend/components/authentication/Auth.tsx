@@ -1,60 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, StyleSheet, View, AppState } from 'react-native';
-import { Button, Input } from 'react-native-elements';
-import axios from 'axios';
-import { supabase } from '@/lib/supabase';
-import { useMutation } from '@tanstack/react-query';
-import { User } from '@supabase/supabase-js';
+import React, { useState, useEffect } from "react";
+import { Alert, StyleSheet, View, AppState, Text } from "react-native";
+import { Button, Input } from "react-native-elements";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 import {
   GoogleSignin,
   GoogleSigninButton,
+  User,
   statusCodes,
-} from '@react-native-google-signin/google-signin';
-
-// Tells Supabase Auth to continuously refresh the session automatically if
-// the app is in the foreground. When this is added, you will continue to receive
-// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
-// if the user's session is terminated. This should only be registered once.
-AppState.addEventListener('change', (state) => {
-  if (state === 'active') {
-    supabase.auth.startAutoRefresh();
-  } else {
-    supabase.auth.stopAutoRefresh();
-  }
-});
+} from "@react-native-google-signin/google-signin";
 
 export default function Auth() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const configureGoogleSignIn = () => {
     GoogleSignin.configure({
       webClientId:
-        '1062870520492-g9cdjtvgpmd0cchkk9mcm30fgnbjk0bq.apps.googleusercontent.com',
+        "1062870520492-g9cdjtvgpmd0cchkk9mcm30fgnbjk0bq.apps.googleusercontent.com",
       iosClientId:
-        '1062870520492-ggg23b1kal30sm9pijftshe18qa8v54u.apps.googleusercontent.com',
+        "1062870520492-ggg23b1kal30sm9pijftshe18qa8v54u.apps.googleusercontent.com",
     });
   };
 
   useEffect(() => {
     configureGoogleSignIn();
-  });
+  }, []);
 
-  const signIn = () => {
-    console.log('Pressed sign in');
+  const signIn = async () => {
+    try {
+      console.log("pressed");
+      await GoogleSignin.hasPlayServices();
+      const user = await GoogleSignin.signIn();
+      setUserInfo(user);
+      setError(null);
+    } catch (error) {
+      setError(error as string);
+    }
   };
+
+  const logout = () => {
+    setUserInfo(null);
+    GoogleSignin.revokeAccess();
+    GoogleSignin.signOut();
+  };
+
+  console.log(error);
 
   return (
     <View style={styles.container}>
-      <GoogleSigninButton
-        style={{ width: 192, height: 48 }}
-        size={GoogleSigninButton.Size.Wide}
-        color={GoogleSigninButton.Color.Light}
-        onPress={signIn}
-      />
+      {userInfo ? <Text>{JSON.stringify(error)}</Text> : null}
+      {userInfo ? (
+        <Text>{userInfo.user.email}</Text>
+      ) : (
+        <GoogleSigninButton
+          style={{ width: 192, height: 48 }}
+          size={GoogleSigninButton.Size.Wide}
+          color={GoogleSigninButton.Color.Light}
+          onPress={signIn}
+        />
+      )}
     </View>
   );
 }
@@ -179,7 +186,7 @@ const styles = StyleSheet.create({
   verticallySpaced: {
     paddingTop: 4,
     paddingBottom: 4,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   mt20: {
     marginTop: 20,
