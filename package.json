@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.10.1",
+    "@react-native-firebase/app": "^18.9.0",
     "dotenv": "^16.4.5"
   }
 }
