@@ -1,7 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL =
-  'https://69e9-2a02-c7c-aed0-6000-6dd3-94a3-f7b8-3744.ngrok-free.app/api/users';
+const API_BASE_URL = "https://06e2-94-8-169-223.ngrok-free.app/api/users";
 
 export const getUser = async (email: string) => {
   try {

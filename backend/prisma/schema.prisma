@@ -38,21 +38,21 @@ enum GenderPref {
 }
 
 model User {
-  user_id            String               @id @default(uuid())
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  providerId         String               @unique
-  email              String               @unique
-  name               String?
-  avatarUrl          String?
-  location           String?
-  bio                String?
-  climbing_level     SkillLevel?
-  gender             String?
-  sessions_joined    Int?
-  Session            Session[]
-  SessionParticipant SessionParticipant[]
-  Friendship         Friendship[]
+  user_id             String               @id @default(uuid())
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  providerId          String               @unique
+  email               String               @unique
+  name                String?
+  avatarUrl           String?
+  location            String?
+  bio                 String?
+  climbing_level      SkillLevel?
+  gender              String?
+  sessions_joined     Int?
+  sessions            Session[]
+  session_participant SessionParticipant[]
+  friends             Friendship[]
 }
 
 model Friendship {
@@ -80,20 +80,20 @@ model Gym {
 }
 
 model Session {
-  session_id         String               @id @default(uuid())
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  creator_id         String
-  creator            User                 @relation(fields: [creator_id], references: [user_id])
-  gym_id             String
-  gym                Gym                  @relation(fields: [gym_id], references: [gym_id])
-  type               SessionType
-  notes              String
-  date               DateTime
-  skill_level        SkillLevel
-  max_participants   Int
-  gender_pref        GenderPref
-  SessionParticipant SessionParticipant[]
+  session_id       String               @id @default(uuid())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  creator_id       String
+  creator          User                 @relation(fields: [creator_id], references: [user_id])
+  gym_id           String
+  gym              Gym                  @relation(fields: [gym_id], references: [gym_id])
+  type             SessionType
+  notes            String
+  date             DateTime
+  skill_level      SkillLevel
+  max_participants Int
+  gender_pref      GenderPref
+  participants     SessionParticipant[]
 }
 
 model SessionParticipant {

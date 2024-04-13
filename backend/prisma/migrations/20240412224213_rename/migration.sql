@@ -1,14 +1,14 @@
 -- CreateEnum
-CREATE TYPE "FriendshipStatus" AS ENUM ('Pending', 'Accepted');
+CREATE TYPE "FriendshipStatus" AS ENUM ('PENDING', 'ACCEPTED');
 
 -- CreateEnum
-CREATE TYPE "SessionType" AS ENUM ('Public', 'Private', 'FriendsOnly');
+CREATE TYPE "SessionType" AS ENUM ('PUBLIC', 'PRIVATE', 'FRIENDSONLY');
 
 -- CreateEnum
-CREATE TYPE "SkillLevel" AS ENUM ('Beginner', 'Intermediate', 'Advanced');
+CREATE TYPE "SkillLevel" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
 
 -- CreateEnum
-CREATE TYPE "GenderPref" AS ENUM ('AllGenders', 'MaleOnly', 'FemaleOnly');
+CREATE TYPE "GenderPref" AS ENUM ('ALLGENDERS', 'MALEONLY', 'FEMALEONLY');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -17,8 +17,8 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "providerId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "avatarUrl" TEXT NOT NULL,
+    "name" TEXT,
+    "avatarUrl" TEXT,
     "location" TEXT,
     "bio" TEXT,
     "climbing_level" "SkillLevel",
@@ -35,7 +35,7 @@ CREATE TABLE "Friendship" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "user_id" TEXT NOT NULL,
     "friend_id" TEXT NOT NULL,
-    "status" "FriendshipStatus" NOT NULL DEFAULT 'Pending',
+    "status" "FriendshipStatus" NOT NULL DEFAULT 'PENDING',
 
     CONSTRAINT "Friendship_pkey" PRIMARY KEY ("friendship_id")
 );

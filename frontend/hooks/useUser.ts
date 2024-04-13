@@ -1,7 +1,7 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useContext } from 'react';
-import { UserContext } from '@/context/UserContext';
-import { createUser, getUser } from '@/services/userService';
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { useContext } from "react";
+import { UserContext } from "@/context/UserContext";
+import { createUser, getUser } from "@/services/userService";
 
 const useUser = () => {
   const {
@@ -35,7 +35,6 @@ const useUser = () => {
   };
 
   const logout = () => {
-    console.log('logout pressed');
     setAuthUserInfo(null);
     GoogleSignin.revokeAccess();
     GoogleSignin.signOut();
