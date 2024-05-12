@@ -1,16 +1,95 @@
+import React from "react";
+import {
+  Modal,
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  Button,
+} from "react-native";
+import { useController, useForm } from "react-hook-form";
+import { FontAwesome } from "@expo/vector-icons";
 import useUser from "@/hooks/useUser";
 import { createSession } from "@/services/sessionService";
-import React from "react";
-import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
+import Dropdown from "@/components/common/Dropdown";
 
 interface IProps {
   isVisible: boolean;
   onClose: () => void;
-  children: React.ReactNode;
 }
 
-const CreateSessionModal = ({ isVisible, onClose, children }: IProps) => {
+const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
   const { user } = useUser();
+  const { control, handleSubmit } = useForm();
+  // const { gyms } = useGyms();
+  // gym = { label: "Depot Armley", value: "123456" }
+
+  const gyms = [
+    {
+      label: "Depot Armley",
+      value: "123456",
+    },
+    {
+      label: "Depot Manchester",
+      value: "654321",
+    },
+  ];
+
+  const TextFormInput = ({ name, control }: any) => {
+    const { field } = useController({
+      control,
+      defaultValue: "",
+      name,
+    });
+
+    return <TextInput value={field.value} onChangeText={field.onChange} />;
+  };
+
+  const NumberFormInput = ({ name, control }: any) => {
+    const { field } = useController({
+      control,
+      defaultValue: 0,
+      name,
+    });
+
+    return <TextInput value={field.value} onChangeText={field.onChange} />;
+  };
+
+  const RadioFormInput = ({ name, control, options }: any) => {
+    const { field } = useController({
+      control,
+      defaultValue: options[0].value,
+      name,
+    });
+
+    return (
+      <View style={styles.pickerContainer}>
+        {options.map((option: any) => (
+          <Pressable
+            key={option.value}
+            onPress={() => field.onChange(option.value)}
+          >
+            <Text style={styles.title}>{option.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+    );
+  };
+
+  const SelectFormInput = ({ name, control, options }: any) => {
+    const { field } = useController({
+      control,
+      defaultValue: options[0],
+      name,
+    });
+
+    return (
+      <View style={styles.pickerContainer}>
+        <Dropdown data={options} />
+      </View>
+    );
+  };
 
   const handleFormSubmit = async () => {
     console.log("Form submitted");
@@ -30,15 +109,45 @@ const CreateSessionModal = ({ isVisible, onClose, children }: IProps) => {
     <Modal animationType="slide" transparent visible={isVisible}>
       <View style={styles.modalContent}>
         <View style={styles.titleContainer}>
-          <Text>Create Session Modal</Text>
+          <Text style={{ color: "white" }}>Create Session</Text>
+          <Pressable onPress={onClose}>
+            <FontAwesome name="close" size={24} color="white" />
+          </Pressable>
         </View>
-        {children}
-        <Pressable onPress={handleFormSubmit}>
-          <Text style={styles.title}>Create Session</Text>
-        </Pressable>
-        <Pressable onPress={onClose}>
-          <Text style={styles.title}>Close</Text>
-        </Pressable>
+        <View style={styles.formContainer}>
+          <SelectFormInput name="gym" control={control} options={gyms} />
+          <RadioFormInput
+            name="type"
+            control={control}
+            options={[
+              { label: "Public", value: "PUBLIC" },
+              { label: "Private", value: "PRIVATE" },
+              { label: "Friends Only", value: "FRIENDSONLY" },
+            ]}
+          />
+          <RadioFormInput
+            name="skillLevel"
+            control={control}
+            options={[
+              { label: "Beginner", value: "BEGINNER" },
+              { label: "Intermediate", value: "INTERMEDIATE" },
+              { label: "Advanced", value: "ADVANCED" },
+            ]}
+          />
+          <NumberFormInput name="maxParticipants" control={control} />
+          <RadioFormInput
+            name="genderPreference"
+            control={control}
+            options={[
+              { label: "All Genders", value: "ALLGENDERS" },
+              { label: "Male Only", value: "MALEONLY" },
+              { label: "Female Only", value: "FEMALEONLY" },
+            ]}
+          />
+          <TextFormInput name="notes" control={control} />
+        </View>
+        <Button title="Create Session" onPress={handleFormSubmit} />
+        <View></View>
       </View>
     </Modal>
   );
@@ -69,6 +178,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
+  formContainer: {},
   pickerContainer: {
     flexDirection: "row",
     justifyContent: "center",

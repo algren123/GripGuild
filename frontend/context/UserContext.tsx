@@ -1,20 +1,6 @@
-import { User as AuthUser } from '@react-native-google-signin/google-signin';
-import { createContext, useState, ReactNode } from 'react';
-
-interface IUser {
-  user_id: string;
-  name: string;
-  email: string;
-  providerId: string;
-  avatarUrl: string;
-  created_at: Date;
-  updated_at: Date;
-  location: string;
-  bio: string;
-  climbing_level: string;
-  gender: string;
-  sessions_joined: number;
-}
+import { User as AuthUser } from "@react-native-google-signin/google-signin";
+import { createContext, useState, ReactNode } from "react";
+import IUser from "@/types/userTypes";
 
 interface IUserContext {
   authUserInfo: AuthUser | null;

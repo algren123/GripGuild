@@ -70,7 +70,8 @@ model Gym {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   name          String
-  location      String
+  address       String?
+  postcode      String?
   description   String
   openingHours  String
   contactNumber String

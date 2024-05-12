@@ -1,6 +1,7 @@
+import IUser from "@/types/userTypes";
 import axios from "axios";
 
-const API_BASE_URL = "https://06e2-94-8-169-223.ngrok-free.app/api/users";
+const API_BASE_URL = "https://19f4-94-8-169-223.ngrok-free.app/api/users";
 
 export const getUser = async (email: string) => {
   try {
@@ -29,10 +30,10 @@ export const checkExistingUser = async (email: string) => {
 export const createUser = async (user: any) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/signup`, {
-      email: user.user.email,
-      name: user.user.name,
-      providerId: user.user.id,
-      avatarUrl: user.user.photo,
+      email: user.email,
+      name: user.name,
+      providerId: user.id,
+      avatarUrl: user.photo,
     });
 
     return response.data.user;

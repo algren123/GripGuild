@@ -1,6 +1,29 @@
 import { Request, Response } from "express";
 import prisma from "../prismaInstance";
 
+export const getAllSessions = async (req: Request, res: Response) => {
+  try {
+    const sessions = await prisma.session.findMany({
+      include: {
+        creator: {
+          select: { name: true, avatarUrl: true },
+        },
+        gym: {
+          select: { name: true },
+        },
+        participants: true,
+      },
+    });
+
+    if (!sessions) {
+      return res.status(404).json({ message: "No sessions found" });
+    }
+
+    res.status(200).json({ message: "User sessions found", sessions });
+  } catch (error) {
+    console.error("Failed getting sessions");
+  }
+};
 export const getUserSessions = async (req: Request, res: Response) => {
   try {
     const { userId } = req.query as { userId: string };
@@ -9,20 +32,22 @@ export const getUserSessions = async (req: Request, res: Response) => {
       where: { user_id: userId },
       include: {
         sessions: {
-          include: { creator: { select: { name: true } } },
+          include: {
+            gym: { select: { name: true } },
+            creator: { select: { name: true, avatarUrl: true } },
+            participants: true,
+          },
         },
       },
     });
 
     const sessions = user?.sessions;
 
-    console.log(sessions);
-
     if (!sessions) {
       return res.status(404).json({ message: "No sessions found" });
     }
 
-    res.status(200).json({ message: "User sessions found", sessions });
+    return res.status(200).json({ message: "User sessions found", sessions });
   } catch (error) {
     console.error(error);
   }
@@ -68,11 +93,33 @@ export const createSession = async (req: Request, res: Response) => {
   }
 };
 
+export const leaveSession = async (req: Request, res: Response) => {
+  try {
+    const { participantId } = req.body.data;
+
+    const leftSession = await prisma.sessionParticipant.delete({
+      where: { participant_id: participantId },
+    });
+
+    if (!leftSession) {
+      return res
+        .status(400)
+        .json({ message: "User was unable to leave session" });
+    }
+
+    console.log("User left session successfully");
+    res.status(200).json({ message: "User left session successfully" });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const createGym = async (req: Request, res: Response) => {
   const fakeGym = await prisma.gym.create({
     data: {
       name: "Depot Armley",
-      location: "Armley, Leeds",
+      address: " Unit 1, Maybrook Industrial Park, Armley Rd, Armley, Leeds",
+      postcode: "LS12 2EL",
       description: "A bouldering gym in Leeds",
       openingHours: "10:00 - 22:00",
       contactNumber: "0113 345 3456",

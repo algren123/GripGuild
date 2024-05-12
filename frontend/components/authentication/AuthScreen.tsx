@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import { Text, ImageBackground, Pressable } from 'react-native';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect } from "react";
+import { Text, ImageBackground, Pressable } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import useAuth from '@/hooks/useUser';
-import { DefaultTheme } from '@react-navigation/native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import useUser from "@/hooks/useUser";
+import { DefaultTheme } from "@react-navigation/native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function AuthScreen() {
-  const { error, signIn } = useAuth();
+  const { error, signIn } = useUser();
 
   useEffect(() => {
     if (error) {
@@ -17,7 +17,7 @@ export default function AuthScreen() {
 
   return (
     <ImageBackground
-      source={require('../../assets/images/auth-bg.jpg')}
+      source={require("../../assets/images/auth-bg.jpg")}
       resizeMode="cover"
       style={styles.image}
     >
@@ -30,13 +30,12 @@ export default function AuthScreen() {
           </Text>
           <Pressable style={styles.googleButton} onPress={signIn}>
             <Text style={styles.signInText}>
-              Sign In or Register with Google{'  '}
+              Sign In or Register with Google{"  "}
               <FontAwesome name="google" size={16} color="black" />
             </Text>
           </Pressable>
           <Text style={styles.terms}>
             By registering you are accepting our terms of use and privacy policy
-            .
           </Text>
         </View>
       </View>
@@ -48,43 +47,43 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 40,
     padding: 16,
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
   },
   textContainer: {
-    marginTop: 'auto',
+    marginTop: "auto",
   },
   header: {
     fontSize: 24,
-    color: 'white',
+    color: "white",
     letterSpacing: 10,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   introText: {
     fontSize: 20,
-    color: 'white',
+    color: "white",
     letterSpacing: 0.5,
-    fontWeight: '400',
+    fontWeight: "400",
     marginTop: 20,
   },
   terms: {
-    color: 'white',
+    color: "white",
   },
   signInText: {
-    textAlign: 'center',
-    fontWeight: '500',
+    textAlign: "center",
+    fontWeight: "500",
     letterSpacing: 0.5,
   },
   googleButton: {
     padding: 12,
     marginVertical: 40,
-    width: '100%',
+    width: "100%",
     borderRadius: 20,
     backgroundColor: DefaultTheme.colors.primary,
   },
   image: {
     flex: 1,
-    width: '100%',
+    width: "100%",
   },
 });

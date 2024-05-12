@@ -1,17 +1,5 @@
 import { createContext, useState, ReactNode } from "react";
-
-export interface ISession {
-  session_id: string;
-  created_at: Date;
-  creator_id: string;
-  date: string;
-  gym_id: string;
-  type: "PUBLIC" | "PRIVATE";
-  skill_level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
-  max_participants: number;
-  gender_pref: "ALLGENDERS" | "MALEONLY" | "FEMALEONLY";
-  notes?: string;
-}
+import { ISession } from "@/types/sessionTypes";
 
 interface ISessionContext {
   joinedSessions: ISession[] | null;

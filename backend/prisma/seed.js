@@ -6,7 +6,8 @@ async function main() {
   const fakeGym = prisma.gym.create({
     data: {
       name: "Depot Armley",
-      location: "Armley, Leeds",
+      address: " Unit 1, Maybrook Industrial Park, Armley Rd, Armley, Leeds",
+      postcode: "LS12 2EL",
       description: "A bouldering gym in Leeds",
       openingHours: "10:00 - 22:00",
       contactNumber: "0113 345 3456",

@@ -1,54 +1,42 @@
-import { Pressable, StyleSheet, Touchable } from "react-native";
-import { useEffect, useState } from "react";
+import { Pressable, StyleSheet } from "react-native";
+import { useState } from "react";
 
 import { Text, View } from "@/components/Themed";
-import useUser from "@/hooks/useUser";
-import { getUserSessions } from "@/services/sessionService";
 import CreateSessionModal from "@/components/common/Modals/CreateSessionModal";
-import { ISession } from "@/context/SessionContext";
+import { ISession } from "@/types/sessionTypes";
+import SessionView from "@/components/common/SessionView";
+import useUser from "@/hooks/useUser";
+import useGetUserSessions from "@/hooks/useGetUserSessions";
 
 export default function MySessionsScreen() {
   const [isModalVisible, setModalVisible] = useState(false);
   const { user } = useUser();
-  const [joinedSessions, setJoinedSessions] = useState<any>(null);
+  const { userSessions } = useGetUserSessions(user?.user_id);
 
   const onModalClose = () => {
     setModalVisible(false);
   };
 
-  useEffect(() => {
-    if (user) {
-      const handleUserSessions = async (userId: string) => {
-        const userSessions = await getUserSessions(userId);
-        setJoinedSessions(userSessions);
-      };
-
-      handleUserSessions(user?.user_id);
-    }
-  }, []);
-
-  console.log(joinedSessions);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sessions</Text>
+      <Text style={styles.title}>Joined Sessions</Text>
       <Pressable onPress={() => setModalVisible(true)}>
         <Text>Create Session</Text>
       </Pressable>
-      <CreateSessionModal isVisible={isModalVisible} onClose={onModalClose}>
-        <View></View>
-      </CreateSessionModal>
-      {joinedSessions?.map((session: any) => {
-        return (
-          <View key={session.session_id}>
-            <Text>{session.creator.name.split(" ")[0]}'s Session</Text>
-            <Text>{session.type}</Text>
-            <Text>{session.date}</Text>
-            <Text>{session.skill_level}</Text>
-            <Text>{session.max_participants}</Text>
-          </View>
-        );
-      })}
+      <CreateSessionModal isVisible={isModalVisible} onClose={onModalClose} />
+      {user ? (
+        <View style={styles.sessionsContainer}>
+          {userSessions?.map((session: ISession) => (
+            <SessionView
+              key={session.session_id}
+              session={session}
+              creatorAvatar={user.avatarUrl}
+              creatorName={user.name}
+              userId={user.user_id}
+            />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -57,7 +45,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 80,
+    paddingTop: 50,
+  },
+  sessionsContainer: {
+    width: "100%",
+    padding: 10,
   },
   title: {
     fontSize: 20,
