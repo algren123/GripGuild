@@ -3,16 +3,18 @@ import {
   Modal,
   View,
   Text,
-  Pressable,
   StyleSheet,
   TextInput,
-  Button,
+  Pressable,
 } from "react-native";
-import { useController, useForm } from "react-hook-form";
+import { Controller, useController, useForm } from "react-hook-form";
+import CustomPressable from "@/components/Pressable";
 import { FontAwesome } from "@expo/vector-icons";
 import useUser from "@/hooks/useUser";
 import { createSession } from "@/services/sessionService";
 import Dropdown from "@/components/common/Dropdown";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Colors from "@/constants/Colors";
 
 interface IProps {
   isVisible: boolean;
@@ -20,10 +22,33 @@ interface IProps {
 }
 
 const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
+  const queryClient = useQueryClient();
   const { user } = useUser();
-  const { control, handleSubmit } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   // const { gyms } = useGyms();
   // gym = { label: "Depot Armley", value: "123456" }
+
+  const createSessionMutation = useMutation({
+    mutationFn: () =>
+      createSession({
+        userId: user?.user_id,
+        gymId: "a1c791f3-0a90-4cc7-8dfa-5b86192be995",
+        sessionType: "PUBLIC",
+        notes: "Test notes",
+        date: new Date(),
+        skillLevel: "BEGINNER",
+        maxParticipants: 10,
+        genderPreference: "ALLGENDERS",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allSessions"] });
+      queryClient.invalidateQueries({ queryKey: ["userSessions"] });
+    },
+  });
 
   const gyms = [
     {
@@ -77,45 +102,20 @@ const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
     );
   };
 
-  const SelectFormInput = ({ name, control, options }: any) => {
-    const { field } = useController({
-      control,
-      defaultValue: options[0],
-      name,
-    });
-
-    return (
-      <View style={styles.pickerContainer}>
-        <Dropdown data={options} />
-      </View>
-    );
-  };
-
-  const handleFormSubmit = async () => {
-    console.log("Form submitted");
-    await createSession({
-      userId: user?.user_id,
-      gymId: "a1c791f3-0a90-4cc7-8dfa-5b86192be995",
-      sessionType: "PUBLIC",
-      notes: "Test notes",
-      date: new Date(),
-      skillLevel: "BEGINNER",
-      maxParticipants: 10,
-      genderPreference: "ALLGENDERS",
-    });
-  };
-
   return (
     <Modal animationType="slide" transparent visible={isVisible}>
       <View style={styles.modalContent}>
         <View style={styles.titleContainer}>
-          <Text style={{ color: "white" }}>Create Session</Text>
+          <Text
+            style={{ color: "black", fontWeight: "bold", textAlign: "center" }}
+          >
+            Create Session
+          </Text>
           <Pressable onPress={onClose}>
-            <FontAwesome name="close" size={24} color="white" />
+            <FontAwesome name="close" size={24} color="black" />
           </Pressable>
         </View>
         <View style={styles.formContainer}>
-          <SelectFormInput name="gym" control={control} options={gyms} />
           <RadioFormInput
             name="type"
             control={control}
@@ -144,9 +144,25 @@ const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
               { label: "Female Only", value: "FEMALEONLY" },
             ]}
           />
-          <TextFormInput name="notes" control={control} />
+          <Text style={styles.label}>Notes</Text>
+          <Controller
+            name="notes"
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                placeholder="Notes"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+          />
         </View>
-        <Button title="Create Session" onPress={handleFormSubmit} />
+        <CustomPressable
+          textElement={<Text>Create Session</Text>}
+          onPress={() => createSessionMutation.mutate()}
+        />
         <View></View>
       </View>
     </Modal>
@@ -155,18 +171,14 @@ const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
 
 const styles = StyleSheet.create({
   modalContent: {
-    height: "auto",
-    width: "100%",
-    backgroundColor: "#25292e",
-    borderTopRightRadius: 18,
-    borderTopLeftRadius: 18,
-    position: "absolute",
-    bottom: 0,
+    flex: 1,
+    paddingTop: 20,
+    padding: 8,
+    backgroundColor: Colors.light.background,
+    color: Colors.light.text,
   },
   titleContainer: {
-    height: "auto",
     padding: 20,
-    backgroundColor: "#464C55",
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     paddingHorizontal: 20,
@@ -175,10 +187,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    color: "#fff",
     fontSize: 16,
   },
   formContainer: {},
+  label: {
+    color: Colors.light.text,
+    margin: 20,
+    marginLeft: 0,
+  },
   pickerContainer: {
     flexDirection: "row",
     justifyContent: "center",

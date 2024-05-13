@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
 import { Text, ImageBackground, Pressable } from "react-native";
 import { StyleSheet, View } from "react-native";
-
 import useUser from "@/hooks/useUser";
-import { DefaultTheme } from "@react-navigation/native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Colors from "@/constants/Colors";
 
 export default function AuthScreen() {
   const { error, signIn } = useUser();
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     width: "100%",
     borderRadius: 20,
-    backgroundColor: DefaultTheme.colors.primary,
+    backgroundColor: Colors.primary,
   },
   image: {
     flex: 1,

@@ -3,6 +3,8 @@ const {
   getAllSessions,
   getUserSessions,
   createSession,
+  deleteSession,
+  joinSession,
   leaveSession,
   createGym,
   getGyms,
@@ -14,7 +16,9 @@ const router = express.Router();
 router.get("/all", getAllSessions);
 router.get("/user", getUserSessions);
 router.post("/create", createSession);
-router.delete("/leave", leaveSession);
+router.post("/join", joinSession);
+router.post("/leave", leaveSession);
+router.post("/delete", deleteSession);
 router.post("/gym", createGym);
 router.get("/gyms", getGyms);
 

@@ -4,6 +4,7 @@ import prisma from "../prismaInstance";
 export const getAllSessions = async (req: Request, res: Response) => {
   try {
     const sessions = await prisma.session.findMany({
+      orderBy: { date: "asc" },
       include: {
         creator: {
           select: { name: true, avatarUrl: true },
@@ -28,20 +29,30 @@ export const getUserSessions = async (req: Request, res: Response) => {
   try {
     const { userId } = req.query as { userId: string };
 
-    const user = await prisma.user.findUnique({
-      where: { user_id: userId },
-      include: {
-        sessions: {
-          include: {
-            gym: { select: { name: true } },
-            creator: { select: { name: true, avatarUrl: true } },
-            participants: true,
-          },
-        },
+    const userJoinedSessions = await prisma.sessionParticipant.findMany({
+      where: {
+        user_id: userId,
+      },
+      select: {
+        session_id: true,
       },
     });
 
-    const sessions = user?.sessions;
+    const sessionIds = userJoinedSessions.map((session) => session.session_id);
+
+    const sessions = await prisma.session.findMany({
+      where: {
+        session_id: {
+          in: sessionIds,
+        },
+      },
+      orderBy: { date: "asc" },
+      include: {
+        gym: { select: { name: true } },
+        creator: { select: { name: true, avatarUrl: true } },
+        participants: true,
+      },
+    });
 
     if (!sessions) {
       return res.status(404).json({ message: "No sessions found" });
@@ -55,8 +66,6 @@ export const getUserSessions = async (req: Request, res: Response) => {
 
 export const createSession = async (req: Request, res: Response) => {
   try {
-    const session = req.body.data;
-
     const {
       userId,
       gymId,
@@ -66,7 +75,7 @@ export const createSession = async (req: Request, res: Response) => {
       skillLevel,
       maxParticipants,
       genderPreference,
-    } = session;
+    } = req.body.data;
 
     const newSession = await prisma.session.create({
       data: {
@@ -88,6 +97,64 @@ export const createSession = async (req: Request, res: Response) => {
 
     console.log("New session created", newSession);
     res.status(201).json({ message: "Session created", newSession });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deleteSession = async (req: Request, res: Response) => {
+  try {
+    const { sessionId } = req.body.data;
+
+    const deletedParticipants = await prisma.sessionParticipant.deleteMany({
+      where: {
+        session_id: sessionId,
+      },
+    });
+
+    const deletedSession = await prisma.session.delete({
+      where: {
+        session_id: sessionId,
+      },
+    });
+
+    // const transaction = await prisma.$transaction([
+    //   deletedParticipants,
+    //   deletedSession,
+    // ]);
+
+    if (!deletedSession) {
+      return res
+        .status(400)
+        .json({ message: "Session was unable to be deleted" });
+    }
+
+    console.log("Session deleted successfully", deletedSession);
+    res.status(200).json({ message: "Session deleted", deleteSession });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const joinSession = async (req: Request, res: Response) => {
+  try {
+    const { sessionId, userId } = req.body.data;
+
+    const joinedSession = await prisma.sessionParticipant.create({
+      data: {
+        user: { connect: { user_id: userId } },
+        session: { connect: { session_id: sessionId } },
+      },
+    });
+
+    if (!joinedSession) {
+      return res
+        .status(400)
+        .json({ message: "User was unable to join session" });
+    }
+
+    console.log("User joined session", joinedSession);
+    res.status(201).json({ message: "Joined session", joinedSession });
   } catch (error) {
     console.error(error);
   }

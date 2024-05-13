@@ -1,9 +1,16 @@
-import { Button, FlatList, ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "@/components/Themed";
+import {
+  ActivityIndicator,
+  Button,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import { Text, View } from "@gluestack-ui/themed";
 import SessionView from "@/components/common/SessionView";
 import useUser from "@/hooks/useUser";
 import useGetAllSessions from "@/hooks/useGetAllSessions";
 import { ISession } from "@/types/sessionTypes";
+import Colors from "@/constants/Colors";
 
 export default function HomeScreen() {
   const { logout, user } = useUser();
@@ -12,24 +19,21 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home</Text>
-      <Button title="Log out" onPress={logout} />
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <ScrollView>
-        {user
-          ? sessions?.map((session: ISession) => (
-              <SessionView
-                key={session.session_id}
-                session={session}
-                userId={user.user_id}
-                creatorAvatar={session.creator.avatarUrl}
-                creatorName={session.creator.name}
-              />
-            ))
-          : null}
+      <View style={styles.separator} />
+      <ScrollView style={styles.sessionContainer}>
+        {user ? (
+          sessions?.map((session: ISession) => (
+            <SessionView
+              key={session.session_id}
+              session={session}
+              userId={user.user_id}
+              creatorAvatar={session.creator.avatarUrl}
+              creatorName={session.creator.name}
+            />
+          ))
+        ) : (
+          <ActivityIndicator size="large" color={Colors.dark.background} />
+        )}
       </ScrollView>
     </View>
   );
@@ -37,6 +41,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 60,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -50,4 +55,5 @@ const styles = StyleSheet.create({
     height: 1,
     width: "80%",
   },
+  sessionContainer: { width: "100%" },
 });

@@ -1,12 +1,13 @@
-import { Pressable, StyleSheet } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 import { useState } from "react";
 
-import { Text, View } from "@/components/Themed";
+import { Text, View } from "@gluestack-ui/themed";
 import CreateSessionModal from "@/components/common/Modals/CreateSessionModal";
 import { ISession } from "@/types/sessionTypes";
 import SessionView from "@/components/common/SessionView";
 import useUser from "@/hooks/useUser";
 import useGetUserSessions from "@/hooks/useGetUserSessions";
+import Colors from "@/constants/Colors";
 
 export default function MySessionsScreen() {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -20,36 +21,40 @@ export default function MySessionsScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Joined Sessions</Text>
-      <Pressable onPress={() => setModalVisible(true)}>
+      <Pressable
+        style={{ marginBottom: 20 }}
+        onPress={() => setModalVisible(true)}
+      >
         <Text>Create Session</Text>
       </Pressable>
       <CreateSessionModal isVisible={isModalVisible} onClose={onModalClose} />
-      {user ? (
+      {user && userSessions ? (
         <View style={styles.sessionsContainer}>
           {userSessions?.map((session: ISession) => (
             <SessionView
               key={session.session_id}
               session={session}
-              creatorAvatar={user.avatarUrl}
-              creatorName={user.name}
+              creatorAvatar={session.creator.avatarUrl}
+              creatorName={session.creator.name}
               userId={user.user_id}
             />
           ))}
         </View>
-      ) : null}
+      ) : (
+        <ActivityIndicator size="large" color={Colors.dark.background} />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 60,
     flex: 1,
     alignItems: "center",
-    paddingTop: 50,
   },
   sessionsContainer: {
     width: "100%",
-    padding: 10,
   },
   title: {
     fontSize: 20,

@@ -1,7 +1,7 @@
 import { ISession } from "@/types/sessionTypes";
 import axios from "axios";
 
-const API_BASE_URL = "https://19f4-94-8-169-223.ngrok-free.app/api";
+const API_BASE_URL = "https://6ded-94-8-169-223.ngrok-free.app/api";
 
 export const getUserSessions = async (
   userId: string
@@ -10,8 +10,6 @@ export const getUserSessions = async (
     const response = await axios.get(`${API_BASE_URL}/sessions/user`, {
       params: { userId },
     });
-
-    console.log(response.data);
 
     if (response.status === 200) {
       return response.data.sessions as unknown as ISession[];
@@ -33,7 +31,7 @@ export const getAllSessions = async () => {
   }
 };
 
-export const createSession = async (sessionData: any) => {
+export const createSession = async (sessionData: Object) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/sessions/create`, {
       data: sessionData,
@@ -45,10 +43,37 @@ export const createSession = async (sessionData: any) => {
   }
 };
 
+export const deleteSession = async (sessionId: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/sessions/delete`, {
+      data: { sessionId },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const joinSession = async (userId: string, sessionId: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/sessions/join`, {
+      data: {
+        userId,
+        sessionId,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const leaveSession = async (participantId: string) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/sessions/leave`, {
-      data: participantId,
+    const response = await axios.post(`${API_BASE_URL}/sessions/leave`, {
+      data: { participantId },
     });
 
     return response.data;

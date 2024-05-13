@@ -1,11 +1,13 @@
 import { Image, StyleSheet } from "react-native";
 
-import { Text, View } from "@/components/Themed";
+import { Text, View } from "@gluestack-ui/themed";
 import useUser from "@/hooks/useUser";
 import ProfileButtons from "@/components/common/ProfileButtons";
+import Pressable from "@/components/Pressable";
+import Colors from "@/constants/Colors";
 
 export default function ProfileScreen() {
-  const { user } = useUser();
+  const { user, logout } = useUser();
 
   return (
     <View style={styles.container}>
@@ -13,14 +15,17 @@ export default function ProfileScreen() {
         <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
       )}
       <Text style={styles.title}>{user?.name}</Text>
+      <Pressable
+        textElement={<Text>Log Out</Text>}
+        buttonColour={Colors.neutral}
+        onPress={logout}
+        otherButtonStyles={{ marginTop: 10 }}
+      />
       <Text style={styles.bio}>{user?.bio}</Text>
+
       <ProfileButtons />
 
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
+      <View style={styles.separator} />
       {/* If user views a friend's profile, show Friend Status */}
       {/* If user views someone's profile and they have a "pending" request, show that */}
 
@@ -43,11 +48,7 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
+      <View style={styles.separator} />
     </View>
   );
 }
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: "80%",
+    backgroundColor: Colors.dark.background,
   },
   avatar: {
     width: 100,

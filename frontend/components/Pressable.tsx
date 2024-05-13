@@ -1,27 +1,31 @@
-import Colors from '@/constants/Colors';
-import React from 'react';
+import Colors from "@/constants/Colors";
+import React from "react";
 
-import { Text, Pressable as RNPressable } from 'react-native';
-import { StyleSheet } from 'react-native';
+import { Text, Pressable as RNPressable } from "react-native";
+import { StyleSheet } from "react-native";
 
 interface PressableProps {
+  textElement: React.JSX.Element;
+  disabled?: boolean;
   buttonColour?: string;
   textColour?: string;
-  text?: string;
   otherTextStyles?: {
     [key: string]: any;
   };
   otherButtonStyles?: {
     [key: string]: any;
   };
+  onPress?: () => void;
 }
 
 const Pressable = ({
-  text,
+  textElement,
+  disabled = false,
+  onPress,
   otherTextStyles,
   otherButtonStyles,
   buttonColour = Colors.primary,
-  textColour = 'black',
+  textColour = "black",
 }: PressableProps) => {
   const styles = StyleSheet.create({
     button: {
@@ -32,15 +36,15 @@ const Pressable = ({
     },
     text: {
       color: textColour,
-      textAlign: 'center',
-      fontWeight: '600',
+      textAlign: "center",
+      fontWeight: "600",
       ...otherTextStyles,
     },
   });
 
   return (
-    <RNPressable style={styles.button}>
-      <Text style={styles.text}>{text}</Text>
+    <RNPressable style={styles.button} onPress={onPress} disabled={disabled}>
+      {{ ...textElement, props: { ...textElement.props, style: styles.text } }}
     </RNPressable>
   );
 };
