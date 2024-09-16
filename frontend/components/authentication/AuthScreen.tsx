@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import { Text, ImageBackground, Pressable } from "react-native";
+import { ImageBackground } from "react-native";
 import { StyleSheet, View } from "react-native";
 import useUser from "@/hooks/useUser";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Colors from "@/constants/Colors";
+import { Button } from "../ui/button";
+import { Text } from "../ui/text";
 
 export default function AuthScreen() {
   const { error, signIn } = useUser();
@@ -27,12 +28,12 @@ export default function AuthScreen() {
             Connect, Climb, Conquer. Your adventure awaits in the Bouldering
             Community!
           </Text>
-          <Pressable style={styles.googleButton} onPress={signIn}>
+          <Button className="bg-primary" onPress={signIn}>
             <Text style={styles.signInText}>
               Sign In or Register with Google{"  "}
               <FontAwesome name="google" size={16} color="black" />
             </Text>
-          </Pressable>
+          </Button>
           <Text style={styles.terms}>
             By registering you are accepting our terms of use and privacy policy
           </Text>
@@ -79,7 +80,6 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     width: "100%",
     borderRadius: 20,
-    backgroundColor: Colors.primary,
   },
   image: {
     flex: 1,

@@ -12,9 +12,7 @@ import CustomPressable from "@/components/Pressable";
 import { FontAwesome } from "@expo/vector-icons";
 import useUser from "@/hooks/useUser";
 import { createSession } from "@/services/sessionService";
-import Dropdown from "@/components/common/Dropdown";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Colors from "@/constants/Colors";
 
 interface IProps {
   isVisible: boolean;
@@ -106,9 +104,7 @@ const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
     <Modal animationType="slide" transparent visible={isVisible}>
       <View style={styles.modalContent}>
         <View style={styles.titleContainer}>
-          <Text
-            style={{ color: "black", fontWeight: "bold", textAlign: "center" }}
-          >
+          <Text style={{ fontWeight: "bold", textAlign: "center" }}>
             Create Session
           </Text>
           <Pressable onPress={onClose}>
@@ -174,8 +170,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     padding: 8,
-    backgroundColor: Colors.light.background,
-    color: Colors.light.text,
   },
   titleContainer: {
     padding: 20,
@@ -191,7 +185,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {},
   label: {
-    color: Colors.light.text,
     margin: 20,
     marginLeft: 0,
   },

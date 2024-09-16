@@ -1,15 +1,16 @@
 import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 import { useState } from "react";
 
-import { Text, View } from "@gluestack-ui/themed";
+import { Text, View } from "react-native";
 import CreateSessionModal from "@/components/common/Modals/CreateSessionModal";
 import { ISession } from "@/types/sessionTypes";
 import SessionView from "@/components/common/SessionView";
 import useUser from "@/hooks/useUser";
 import useGetUserSessions from "@/hooks/useGetUserSessions";
-import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 export default function MySessionsScreen() {
+  const { colors } = useTheme();
   const [isModalVisible, setModalVisible] = useState(false);
   const { user } = useUser();
   const { userSessions } = useGetUserSessions(user?.user_id);
@@ -20,7 +21,6 @@ export default function MySessionsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Joined Sessions</Text>
       <Pressable
         style={{ marginBottom: 20 }}
         onPress={() => setModalVisible(true)}
@@ -41,7 +41,7 @@ export default function MySessionsScreen() {
           ))}
         </View>
       ) : (
-        <ActivityIndicator size="large" color={Colors.dark.background} />
+        <ActivityIndicator size="large" color={colors.text} />
       )}
     </View>
   );
@@ -49,7 +49,6 @@ export default function MySessionsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
     flex: 1,
     alignItems: "center",
   },

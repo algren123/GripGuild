@@ -1,5 +1,4 @@
 import { StyleSheet, Text } from "react-native";
-import Colors from "@/constants/Colors";
 import Pressable from "@/components/Pressable";
 import { View } from "@gluestack-ui/themed";
 
@@ -11,28 +10,22 @@ const ProfileButtons = ({ displaySocialButtons = false }) => {
         <View style={styles.socialButtonGroup}>
           <Pressable
             textElement={<Text>Send Friend Request</Text>}
-            buttonColour={Colors.primary}
             textColour="black"
             otherButtonStyles={{ marginBottom: 20 }}
           />
           <Pressable
             textElement={<Text>Block</Text>}
-            buttonColour={Colors.error}
             textColour="black"
             otherButtonStyles={{ marginBottom: 20 }}
           />
           <Pressable
             textElement={<Text>Report</Text>}
-            buttonColour={Colors.neutral}
             textColour="black"
             otherButtonStyles={{ marginBottom: 20 }}
           />
         </View>
       )}
-      <Pressable
-        textElement={<Text>Edit Profile</Text>}
-        buttonColour={Colors.primary}
-      />
+      <Pressable textElement={<Text>Edit Profile</Text>} />
     </View>
   );
 };

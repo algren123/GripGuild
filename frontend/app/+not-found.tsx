@@ -1,7 +1,8 @@
 import { Link, Stack } from "expo-router";
 import { StyleSheet } from "react-native";
 
-import { Text, View } from "@gluestack-ui/themed";
+import { View } from "@gluestack-ui/themed";
+import { Text } from "@/components/ui/text";
 
 export default function NotFoundScreen() {
   return (

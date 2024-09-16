@@ -1,10 +1,9 @@
-import { Image, StyleSheet } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
-import { Text, View } from "@gluestack-ui/themed";
 import useUser from "@/hooks/useUser";
 import ProfileButtons from "@/components/common/ProfileButtons";
-import Pressable from "@/components/Pressable";
-import Colors from "@/constants/Colors";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
 
 export default function ProfileScreen() {
   const { user, logout } = useUser();
@@ -14,13 +13,14 @@ export default function ProfileScreen() {
       {user?.avatarUrl && (
         <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
       )}
-      <Text style={styles.title}>{user?.name}</Text>
-      <Pressable
-        textElement={<Text>Log Out</Text>}
-        buttonColour={Colors.neutral}
+      <Text>{user?.name}</Text>
+      <Button
+        className="bg-primary dark:bg-green-500"
+        variant="outline"
         onPress={logout}
-        otherButtonStyles={{ marginTop: 10 }}
-      />
+      >
+        <Text>Log Out</Text>
+      </Button>
       <Text style={styles.bio}>{user?.bio}</Text>
 
       <ProfileButtons />
@@ -57,13 +57,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 80,
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: "80%",
-    backgroundColor: Colors.dark.background,
   },
   avatar: {
     width: 100,

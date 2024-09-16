@@ -1,24 +1,18 @@
-import {
-  ActivityIndicator,
-  Button,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import { Text, View } from "@gluestack-ui/themed";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
+import { View } from "@gluestack-ui/themed";
 import SessionView from "@/components/common/SessionView";
 import useUser from "@/hooks/useUser";
 import useGetAllSessions from "@/hooks/useGetAllSessions";
 import { ISession } from "@/types/sessionTypes";
-import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 export default function HomeScreen() {
-  const { logout, user } = useUser();
+  const { user } = useUser();
+  const { colors } = useTheme();
   const { sessions } = useGetAllSessions();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
       <View style={styles.separator} />
       <ScrollView style={styles.sessionContainer}>
         {user ? (
@@ -32,7 +26,7 @@ export default function HomeScreen() {
             />
           ))
         ) : (
-          <ActivityIndicator size="large" color={Colors.dark.background} />
+          <ActivityIndicator size="large" color={colors.text} />
         )}
       </ScrollView>
     </View>
@@ -41,7 +35,6 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 60,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -51,7 +44,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   separator: {
-    marginVertical: 30,
+    marginVertical: 10,
     height: 1,
     width: "80%",
   },

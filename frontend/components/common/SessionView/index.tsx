@@ -1,5 +1,5 @@
-import { View } from "@/components/Themed";
-import { Text } from "@gluestack-ui/themed";
+import { View } from "react-native";
+import { Text } from "@/components/ui/text";
 import GenderPreference from "@/constants/GenderPreference";
 import SkillLevels from "@/constants/SkillLevels";
 import { ISession } from "@/types/sessionTypes";
@@ -8,10 +8,10 @@ import {
   joinSession,
   leaveSession,
 } from "@/services/sessionService";
-import Pressable from "@/components/Pressable";
 import { ActivityIndicator, Image, StyleSheet } from "react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
+import { Button } from "@/components/ui/button";
 
 interface IProps {
   session: ISession;
@@ -26,6 +26,7 @@ const SessionView = ({
   creatorAvatar,
   creatorName,
 }: IProps) => {
+  const { colors } = useTheme();
   const queryClient = useQueryClient();
   const {
     max_participants: maxParticipants,
@@ -83,54 +84,44 @@ const SessionView = ({
         <Text>{GenderPreference[genderPref]}</Text>
       </View>
       <View style={styles.buttonRow}>
-        <Pressable
-          textElement={<Text>View</Text>}
-          otherButtonStyles={styles.button}
-        />
+        <Button variant="outline">
+          <Text>View</Text>
+        </Button>
         {participant?.user_id !== userId ? (
-          <Pressable
-            textElement={
-              joinMutation.isPending ? (
-                <ActivityIndicator color={Colors.dark.background} />
-              ) : (
-                <Text>Join</Text>
-              )
-            }
-            buttonColour={Colors.success}
+          <Button
+            className="bg-primary"
             disabled={
               session.participants.length >= maxParticipants ||
               session.creator_id === userId
             }
-            otherButtonStyles={styles.button}
             onPress={() => joinMutation.mutate()}
-          />
+          >
+            {joinMutation.isPending ? (
+              <ActivityIndicator color={colors.text} />
+            ) : (
+              <Text>Join</Text>
+            )}
+          </Button>
         ) : null}
         {session.creator_id === userId ? (
-          <Pressable
-            textElement={
-              deleteMutation.isPending ? (
-                <ActivityIndicator color={Colors.dark.background} />
-              ) : (
-                <Text>Delete</Text>
-              )
-            }
-            buttonColour={Colors.error}
-            otherButtonStyles={styles.button}
-            onPress={() => deleteMutation.mutate()}
-          />
+          <Button variant="destructive" onPress={() => deleteMutation.mutate()}>
+            {deleteMutation.isPending ? (
+              <ActivityIndicator color={colors.text} />
+            ) : (
+              <Text>Delete</Text>
+            )}
+          </Button>
         ) : !!participant ? (
-          <Pressable
-            textElement={
-              leaveMutation.isPending ? (
-                <ActivityIndicator color={Colors.dark.background} />
-              ) : (
-                <Text>Leave</Text>
-              )
-            }
-            buttonColour={Colors.warning}
-            otherButtonStyles={styles.button}
+          <Button
+            variant="secondary"
             onPress={() => leaveMutation.mutate(participant.participant_id)}
-          />
+          >
+            {leaveMutation.isPending ? (
+              <ActivityIndicator color={colors.text} />
+            ) : (
+              <Text>Leave</Text>
+            )}
+          </Button>
         ) : null}
       </View>
     </View>
@@ -146,7 +137,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginHorizontal: 20,
     borderWidth: 2,
-    borderBlockColor: Colors.dark.background,
   },
   headerContainer: {
     flexDirection: "row",

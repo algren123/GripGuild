@@ -1,7 +1,7 @@
 import { ISession } from "@/types/sessionTypes";
 import axios from "axios";
 
-const API_BASE_URL = "https://6ded-94-8-169-223.ngrok-free.app/api";
+const API_BASE_URL = "https://jennet-obliging-duck.ngrok-free.app/api";
 
 export const getUserSessions = async (
   userId: string
