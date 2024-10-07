@@ -1,31 +1,49 @@
-import { StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  ListRenderItem,
+  FlatList,
+  SafeAreaView,
+} from "react-native";
+import SessionView from "@/components/common/SessionView";
+import useUser from "@/hooks/useUser";
+import useGetAllSessions from "@/hooks/useGetAllSessions";
+import { ISession } from "@/types/sessionTypes";
+import { useTheme } from "@react-navigation/native";
 
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@gluestack-ui/themed";
+export default function HomeScreen() {
+  const { user } = useUser();
+  const { colors } = useTheme();
+  const { sessions } = useGetAllSessions();
 
-export default function DiscoverScreen() {
+  const renderItem: ListRenderItem<ISession> = ({
+    item,
+  }: {
+    item: ISession;
+  }) => {
+    return user ? (
+      <SessionView
+        key={item.session_id}
+        session={item}
+        userId={user.user_id}
+        creatorAvatar={item.creator.avatarUrl}
+        creatorName={item.creator.name}
+      />
+    ) : null;
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Discover</Text>
-      <View style={styles.separator} />
-      <EditScreenInfo path="app/(tabs)/twoo.tsx" />
-    </View>
+    <SafeAreaView className="flex-1 items-center mx-12">
+      {user ? (
+        <FlatList
+          data={sessions}
+          // @ts-ignore
+          renderItem={renderItem}
+          className="w-full"
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <ActivityIndicator size="large" color={colors.text} />
+      )}
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});

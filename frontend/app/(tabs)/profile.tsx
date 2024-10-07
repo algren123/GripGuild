@@ -14,11 +14,7 @@ export default function ProfileScreen() {
         <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
       )}
       <Text>{user?.name}</Text>
-      <Button
-        className="bg-primary dark:bg-green-500"
-        variant="outline"
-        onPress={logout}
-      >
+      <Button variant="outline" onPress={logout}>
         <Text>Log Out</Text>
       </Button>
       <Text style={styles.bio}>{user?.bio}</Text>
