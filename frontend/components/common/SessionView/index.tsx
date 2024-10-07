@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { Text } from "@/components/ui/text";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import GenderPreference from "@/constants/GenderPreference";
 import SkillLevels from "@/constants/SkillLevels";
 import { ISession } from "@/types/sessionTypes";
@@ -8,10 +9,14 @@ import {
   joinSession,
   leaveSession,
 } from "@/services/sessionService";
-import { ActivityIndicator, Image, StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "@/components/ui/button";
+
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Muted } from "@/components/ui/typography";
 
 interface IProps {
   session: ISession;
@@ -67,23 +72,43 @@ const SessionView = ({
   );
 
   return (
-    <View style={styles.sessionContainer}>
-      <View style={styles.headerContainer}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <Image source={{ uri: creatorAvatar }} style={styles.avatar} />
-          <Text style={{ fontWeight: "bold" }}>{firstName}'s Session</Text>
+    <Card className="w-full my-3">
+      <Muted className="text-center py-1">{localDate.toDateString()}</Muted>
+      <Separator className="opacity-50" />
+      <CardHeader className="flex-1 flex-row justify-between items-center">
+        <View className="flex-row items-center">
+          <Avatar alt="User's Avatar" className="mr-2">
+            <AvatarImage source={{ uri: creatorAvatar }} />
+            <AvatarFallback>
+              <Text>ZN</Text>
+            </AvatarFallback>
+          </Avatar>
+          <CardTitle>
+            <Text className="my-auto font-bold">{firstName}'s Session</Text>
+          </CardTitle>
         </View>
         <Text>
           {session.participants.length}/{maxParticipants}
         </Text>
-      </View>
-      <Text>Skill Level - {SkillLevels[skillLevel]}</Text>
-      <Text>Gym - {session.gym?.name}</Text>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text>Date - {localDate.toDateString()}</Text>
-        <Text>{GenderPreference[genderPref]}</Text>
-      </View>
-      <View style={styles.buttonRow}>
+      </CardHeader>
+      <CardContent className="flex-1 flex-row">
+        <View className="flex-1 items-center justify-center">
+          <Text>Skill Level</Text>
+          <Text className="font-bold">{SkillLevels[skillLevel]}</Text>
+        </View>
+        <Separator orientation="vertical" className="mx-1" />
+        <View className="flex-1 items-center">
+          <Text>Location</Text>
+          <Text className="font-bold">{session.gym?.name}</Text>
+        </View>
+        <Separator orientation="vertical" className="mx-1" />
+        <View className="flex-1 items-center">
+          <Text>Gender Pref</Text>
+          <Text className="font-bold">{GenderPreference[genderPref]}</Text>
+        </View>
+      </CardContent>
+      <Separator orientation="horizontal" />
+      <View className="flex-1 flex-row justify-between mx-5 my-3">
         <Button variant="outline">
           <Text>View</Text>
         </Button>
@@ -92,7 +117,8 @@ const SessionView = ({
             className="bg-primary"
             disabled={
               session.participants.length >= maxParticipants ||
-              session.creator_id === userId
+              session.creator_id === userId ||
+              joinMutation.isPending
             }
             onPress={() => joinMutation.mutate()}
           >
@@ -104,7 +130,11 @@ const SessionView = ({
           </Button>
         ) : null}
         {session.creator_id === userId ? (
-          <Button variant="destructive" onPress={() => deleteMutation.mutate()}>
+          <Button
+            variant="destructive"
+            disabled={deleteMutation.isPending}
+            onPress={() => deleteMutation.mutate()}
+          >
             {deleteMutation.isPending ? (
               <ActivityIndicator color={colors.text} />
             ) : (
@@ -124,7 +154,7 @@ const SessionView = ({
           </Button>
         ) : null}
       </View>
-    </View>
+    </Card>
   );
 };
 

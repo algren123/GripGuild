@@ -1,1 +1,1 @@
-export enum SessionType = "PUBLIC" | "PRIVATE";
+export type SessionType = "PUBLIC" | "PRIVATE";

@@ -19,19 +19,21 @@ export default function AuthScreen() {
     <ImageBackground
       source={require("../../assets/images/auth-bg.jpg")}
       resizeMode="cover"
-      style={styles.image}
+      className="h-full"
     >
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text style={styles.header}>GRIPGUILD</Text>
-          <Text style={styles.introText}>
+      <View className="flex-1 justify-end my-6 mx-3">
+        <View>
+          <Text className="font-bold text-4xl tracking-widest text-white">
+            GRIPGUILD
+          </Text>
+          <Text className="text-white text-2xl my-6">
             Connect, Climb, Conquer. Your adventure awaits in the Bouldering
             Community!
           </Text>
-          <Button className="bg-primary" onPress={signIn}>
+          <Button className="bg-primary mb-2" onPress={signIn}>
             <Text style={styles.signInText}>
               Sign In or Register with Google{"  "}
-              <FontAwesome name="google" size={16} color="black" />
+              <FontAwesome name="google" size={16} color="white" />
             </Text>
           </Button>
           <Text style={styles.terms}>
@@ -44,22 +46,6 @@ export default function AuthScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 40,
-    padding: 16,
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  },
-  textContainer: {
-    marginTop: "auto",
-  },
-  header: {
-    fontSize: 24,
-    color: "white",
-    letterSpacing: 10,
-    fontWeight: "700",
-  },
   introText: {
     fontSize: 20,
     color: "white",
@@ -80,9 +66,5 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     width: "100%",
     borderRadius: 20,
-  },
-  image: {
-    flex: 1,
-    width: "100%",
   },
 });

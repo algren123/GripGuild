@@ -1,18 +1,25 @@
-import React from "react";
-import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Pressable,
-} from "react-native";
-import { Controller, useController, useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Modal, View, Text, Pressable } from "react-native";
+import { useForm } from "react-hook-form";
 import CustomPressable from "@/components/Pressable";
 import { FontAwesome } from "@expo/vector-icons";
 import useUser from "@/hooks/useUser";
 import { createSession } from "@/services/sessionService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { SessionType } from "@/constants/SessionType";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { TSkillLevel } from "@/constants/SkillLevels";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { PortalHost, useModalPortalRoot } from "@rn-primitives/portal";
 
 interface IProps {
   isVisible: boolean;
@@ -22,13 +29,34 @@ interface IProps {
 const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
   const queryClient = useQueryClient();
   const { user } = useUser();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const form = useForm();
+  const insets = useSafeAreaInsets();
+  const { sideOffset, ...rootProps } = useModalPortalRoot();
+
+  const [sessionType, setSessionType] = useState<SessionType>("PUBLIC");
+  const [skillLevel, setSkillLevel] = useState<TSkillLevel>("BEGINNER");
+  const [maxParticipants, setMaxParticipants] = useState({
+    label: "2",
+    value: "2",
+  });
   // const { gyms } = useGyms();
   // gym = { label: "Depot Armley", value: "123456" }
+
+  function onSessionTypePress(label: string) {
+    return () => {
+      setSessionType(label as SessionType);
+    };
+  }
+
+  function onSkillLevelPress(label: string) {
+    return () => {
+      setSkillLevel(label as TSkillLevel);
+    };
+  }
+
+  function onChangeMaxParticipants(option: { label: string; value: string }) {
+    setMaxParticipants(option);
+  }
 
   const createSessionMutation = useMutation({
     mutationFn: () =>
@@ -59,51 +87,19 @@ const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
     },
   ];
 
-  const TextFormInput = ({ name, control }: any) => {
-    const { field } = useController({
-      control,
-      defaultValue: "",
-      name,
-    });
-
-    return <TextInput value={field.value} onChangeText={field.onChange} />;
+  const contentInsets = {
+    top: insets.top,
+    bottom: insets.bottom,
+    left: 12,
+    right: 12,
   };
 
-  const NumberFormInput = ({ name, control }: any) => {
-    const { field } = useController({
-      control,
-      defaultValue: 0,
-      name,
-    });
-
-    return <TextInput value={field.value} onChangeText={field.onChange} />;
-  };
-
-  const RadioFormInput = ({ name, control, options }: any) => {
-    const { field } = useController({
-      control,
-      defaultValue: options[0].value,
-      name,
-    });
-
-    return (
-      <View style={styles.pickerContainer}>
-        {options.map((option: any) => (
-          <Pressable
-            key={option.value}
-            onPress={() => field.onChange(option.value)}
-          >
-            <Text style={styles.title}>{option.label}</Text>
-          </Pressable>
-        ))}
-      </View>
-    );
-  };
+  console.log(maxParticipants);
 
   return (
     <Modal animationType="slide" transparent visible={isVisible}>
-      <View style={styles.modalContent}>
-        <View style={styles.titleContainer}>
+      <View className="bg-background h-full" {...rootProps}>
+        <View>
           <Text style={{ fontWeight: "bold", textAlign: "center" }}>
             Create Session
           </Text>
@@ -111,25 +107,80 @@ const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
             <FontAwesome name="close" size={24} color="black" />
           </Pressable>
         </View>
-        <View style={styles.formContainer}>
-          <RadioFormInput
-            name="type"
-            control={control}
-            options={[
-              { label: "Public", value: "PUBLIC" },
-              { label: "Private", value: "PRIVATE" },
-              { label: "Friends Only", value: "FRIENDSONLY" },
-            ]}
-          />
-          <RadioFormInput
-            name="skillLevel"
-            control={control}
-            options={[
-              { label: "Beginner", value: "BEGINNER" },
-              { label: "Intermediate", value: "INTERMEDIATE" },
-              { label: "Advanced", value: "ADVANCED" },
-            ]}
-          />
+        <View>
+          {/* @ts-ignore */}
+          <RadioGroup value={sessionType} onValueChange={setSessionType}>
+            <RadioGroupItemWithLabel
+              value="PUBLIC"
+              displayValue="Public"
+              onLabelPress={onSessionTypePress("PUBLIC")}
+              aria-labelledby="Public"
+            />
+            <RadioGroupItemWithLabel
+              value="PRIVATE"
+              displayValue="Private"
+              onLabelPress={onSessionTypePress("PRIVATE")}
+              aria-labelledby="Private"
+            />
+          </RadioGroup>
+          {/* @ts-ignore */}
+          <RadioGroup value={skillLevel} onValueChange={setSkillLevel}>
+            <RadioGroupItemWithLabel
+              value="BEGINNER"
+              displayValue="Beginner"
+              onLabelPress={onSkillLevelPress("BEGINNER")}
+              aria-labelledby="Beginner"
+            />
+            <RadioGroupItemWithLabel
+              value="INTERMEDIATE"
+              displayValue="Intermediate"
+              onLabelPress={onSkillLevelPress("INTERMEDIATE")}
+              aria-labelledby="Intermediate"
+            />
+            <RadioGroupItemWithLabel
+              value="ADVANCED"
+              displayValue="Advanced"
+              onLabelPress={onSkillLevelPress("ADVANCED")}
+              aria-labelledby="Advanced"
+            />
+          </RadioGroup>
+          <Select
+            defaultValue={{ value: "2", label: "2" }}
+            // @ts-ignore
+            onValueChange={onChangeMaxParticipants}
+          >
+            <SelectTrigger className="w-[250px]">
+              <SelectValue
+                className="text-foreground text-sm native:text-lg"
+                placeholder="Select maximum number of participants"
+              />
+            </SelectTrigger>
+            <SelectContent
+              insets={contentInsets}
+              sideOffset={sideOffset}
+              className="w-[250px]"
+              portalHost="modal-example"
+            >
+              <SelectGroup>
+                <SelectItem label="2" value="2">
+                  2
+                </SelectItem>
+                <SelectItem label="3" value="3">
+                  3
+                </SelectItem>
+                <SelectItem label="4" value="4">
+                  4
+                </SelectItem>
+                <SelectItem label="5" value="5">
+                  5
+                </SelectItem>
+                <SelectItem label="6" value="6">
+                  6
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {/* 
           <NumberFormInput name="maxParticipants" control={control} />
           <RadioFormInput
             name="genderPreference"
@@ -153,48 +204,35 @@ const CreateSessionModal = ({ isVisible, onClose }: IProps) => {
                 value={value}
               />
             )}
-          />
+          /> */}
+          <PortalHost name="modal-example" />
         </View>
         <CustomPressable
           textElement={<Text>Create Session</Text>}
           onPress={() => createSessionMutation.mutate()}
         />
-        <View></View>
       </View>
     </Modal>
   );
 };
 
-const styles = StyleSheet.create({
-  modalContent: {
-    flex: 1,
-    paddingTop: 20,
-    padding: 8,
-  },
-  titleContainer: {
-    padding: 20,
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  title: {
-    fontSize: 16,
-  },
-  formContainer: {},
-  label: {
-    margin: 20,
-    marginLeft: 0,
-  },
-  pickerContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 50,
-    paddingVertical: 20,
-  },
-});
+function RadioGroupItemWithLabel({
+  value,
+  displayValue,
+  onLabelPress,
+}: {
+  value: string;
+  displayValue: string;
+  onLabelPress: () => void;
+}) {
+  return (
+    <View className={"flex-row gap-2 items-center"}>
+      <RadioGroupItem aria-labelledby={`label-for-${value}`} value={value} />
+      <Label nativeID={`label-for-${value}`} onPress={onLabelPress}>
+        {displayValue}
+      </Label>
+    </View>
+  );
+}
 
 export default CreateSessionModal;
