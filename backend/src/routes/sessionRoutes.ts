@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const express = require("express");
 const {
-  getAllSessions,
-  getUserSessions,
-  createSession,
-  deleteSession,
-  joinSession,
-  leaveSession,
-  createGym,
-  getGyms,
+	getAllSessions,
+	getUserSessions,
+	getSessionParticipants,
+	createSession,
+	deleteSession,
+	joinSession,
+	leaveSession,
+	createGym,
+	getGyms,
 } = require("../controllers/sessionController");
 
 const router = express.Router();
@@ -15,6 +17,7 @@ const router = express.Router();
 // Define routes
 router.get("/all", getAllSessions);
 router.get("/user", getUserSessions);
+router.get("/participants", getSessionParticipants);
 router.post("/create", createSession);
 router.post("/join", joinSession);
 router.post("/leave", leaveSession);

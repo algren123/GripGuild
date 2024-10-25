@@ -1,22 +1,23 @@
+import React from "react";
 import { createContext, useState, ReactNode } from "react";
 import { ISession } from "@/types/sessionTypes";
 
 interface ISessionContext {
-  joinedSessions: ISession[] | null;
-  setJoinedSessions: (sessions: ISession[] | null) => void;
+	joinedSessions: ISession[] | null;
+	setJoinedSessions: (sessions: ISession[] | null) => void;
 }
 
 export const SessionContext = createContext<ISessionContext>({
-  joinedSessions: null,
-  setJoinedSessions: () => {},
+	joinedSessions: null,
+	setJoinedSessions: () => {},
 });
 
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
-  const [joinedSessions, setJoinedSessions] = useState<ISession[] | null>(null);
+	const [joinedSessions, setJoinedSessions] = useState<ISession[] | null>(null);
 
-  return (
-    <SessionContext.Provider value={{ joinedSessions, setJoinedSessions }}>
-      {children}
-    </SessionContext.Provider>
-  );
+	return (
+		<SessionContext.Provider value={{ joinedSessions, setJoinedSessions }}>
+			{children}
+		</SessionContext.Provider>
+	);
 };
